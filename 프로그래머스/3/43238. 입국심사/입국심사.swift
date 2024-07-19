@@ -1,25 +1,24 @@
 import Foundation
 
 func solution(_ n:Int, _ times:[Int]) -> Int64 {
-    var minTime = 1
-    var maxTime = times.max()! * n
-    var answer = maxTime
-
-    while minTime <= maxTime {
-        let midTime = (minTime + maxTime) / 2
+    var result = 0
+    var min = times.min()!
+    var max = times.min()! * n
+    
+    while min <= max {
+        var mid = (min + max) / 2
         var total = 0
-        
         for time in times {
-            total += midTime / time
+            total += mid / time
         }
-
+        
         if total < n {
-            minTime = midTime + 1
+            min = mid + 1
         } else {
-            answer = midTime
-            maxTime = midTime - 1
+            result = mid
+            max = mid - 1
         }
     }
-
-    return Int64(answer)
+    
+    return Int64(result)
 }

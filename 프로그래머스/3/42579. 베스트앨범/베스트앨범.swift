@@ -7,43 +7,32 @@ struct Music {
 }
 
 func solution(_ genres:[String], _ plays:[Int]) -> [Int] {
-    var musics: [Music] = []
-    var genreCount: [String:Int] = [:]
-    var rankDic: [String:Int] = [:]
     var result: [Int] = []
-    var rank = 1
+    var genreToMusics: [String:[Music]] = [:]
+    var genrePlayCounts: [String:Int] = [:]
     
-    for (index, play) in plays.enumerated() {
-        let music = Music(genre: genres[index], play: play, index: index)
-        musics.append(music)
+    for (index, genre) in genres.enumerated() {
+        let play = plays[index]
+        let music = Music(genre: genre, play: play, index: index)
+        genreToMusics[genre, default: []].append(music)
+        genrePlayCounts[genre, default: 0] += play
     }
     
-    var sortedMusics = musics.sorted { aMusic, bMusic in
-        aMusic.play > bMusic.play
-    }
+    let sortedGenre = genrePlayCounts.sorted{ $0.value > $1.value }.map{ $0.key }
     
-    for index in sortedMusics.indices {
-        var music = sortedMusics[index]
-        
-        if genreCount[music.genre, default: 0] >= 2 { // 해당 장르의 곡이 이미 2개 수록되었을 경우
-            break
-        } else {
-            result.append(music.index)
-            genreCount[music.genre, default: 0] += 1
-            if rankDic[music.genre, default: 0] == 0 {
-                rankDic[music.genre] = rank
+    for genre in sortedGenre {
+        var musics = genreToMusics[genre]!
+        musics.sort { 
+            if $0.play == $1.play {
+                return $0.index < $0.index
             }
-            rank += 1
+            return $0.play > $1.play
+        }
+        
+        for music in musics.prefix(2) {
+            result.append(music.index)
         }
     }
     
-    let sortedResult = result.sorted { a, b in
-        if genres[a] == genres[b] {
-            return plays[a] > plays[b]
-        } else {
-            return rankDic[genres[a]]! < rankDic[genres[b]]!
-        }
-    }
-    
-    return sortedResult
+    return result
 }

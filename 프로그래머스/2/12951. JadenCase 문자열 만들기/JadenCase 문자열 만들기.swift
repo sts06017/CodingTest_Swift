@@ -1,19 +1,17 @@
 func solution(_ s:String) -> String {
-    var arr = s.components(separatedBy: " ")
-    arr = arr.map {
-        if $0 == "" {
-            return $0
+    var result: [[String]] = []
+    var arr = s.components(separatedBy: " ").map{ $0.lowercased() }
+    for str in arr {
+        var temp: [String] = []
+        for s in str {
+            if temp.isEmpty {
+                temp.append(String(s).uppercased())
+            } else {
+                temp.append(String(s))
+            }
         }
-        
-        var lowerString = $0.lowercased()
-        var firstChar = lowerString.removeFirst()
-        
-        if firstChar.isLetter {
-            return String(firstChar.uppercased()) + lowerString
-        } else {
-            return String(firstChar) + lowerString
-        }
+        result.append(temp)
     }
     
-    return arr.joined(separator: " ")
+    return result.map{ $0.joined() }.joined(separator: " ")
 }
